@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "313334443818",
+    "firebase_url": "https://talkingthing-5935d.firebaseio.com",
+    "project_id": "talkingthing-5935d",
+    "storage_bucket": "talkingthing-5935d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:313334443818:android:a98d219a4f42c9e2",
+        "android_client_info": {
+          "package_name": "com.noise.android.talkingthing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "313334443818-8626jpk45ohcc0rs9oq6g24e4fgb7b0s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.noise.android.talkingthing",
+            "certificate_hash": "70875fb4804985f0cf53c9e1707305af2b90d6ac"
+          }
+        },
+        {
+          "client_id": "313334443818-jq2qc7skrfmm57o9mspjdmuu17hgqpkc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8EN_15J_hep4ov6J0TRp6tO43socFnCY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "313334443818-jq2qc7skrfmm57o9mspjdmuu17hgqpkc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
