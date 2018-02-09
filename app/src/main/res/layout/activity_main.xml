@@ -34,7 +34,7 @@
             android:layout_marginTop="20dp"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:text="SIGN IN"/>
+            android:text="@string/sign_in"/>
 
         <TextView
             android:textStyle="bold"
@@ -43,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:text="Sign up here"/>
+            android:text="@string/sign_up_here"/>
 
         <TextView
             android:textStyle="bold"
@@ -52,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:text="Forgot password?"/>
+            android:text="@string/forgot_password"/>
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
