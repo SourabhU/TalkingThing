@@ -17,8 +17,8 @@
         android:id="@+id/noUsersText"
         android:visibility="gone"/>
 
-    <ListView
-        android:layout_width="match_parent"
+    <android.support.v7.widget.RecyclerView
         android:layout_height="wrap_content"
-        android:id="@+id/usersList"/>
+        android:layout_width="match_parent"
+        android:id="@+id/Userlist"/>
 </LinearLayout>

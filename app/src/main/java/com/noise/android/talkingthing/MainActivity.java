@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FirebaseApp.initializeApp(this);
 
         //Initializing objects
         Signin = (Button) findViewById(R.id.Signin);
@@ -67,61 +71,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    //Sign in method
-    private void Login(){
+        //Sign in method
+        private void Login () {
         String email = Email.getText().toString().trim().toLowerCase();
         String password = Password.getText().toString();
 
-        firebaseauth.signInWithEmailAndPassword(email,password)
+        firebaseauth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         progressdialog.dismiss();
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             //start stuff
                             finish();
-                            Intent home = new Intent(getApplicationContext(),Home.class);
+                            Intent home = new Intent(getApplicationContext(), Home.class);
                             startActivity(home);
-                        }
-
-                        else{
+                        } else {
                             Toast.makeText(MainActivity.this, "Check credentials", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
 
-    //Syntactic credential check
-    private void SigninUser(){
-        String email = Email.getText().toString().trim().toLowerCase();
-        String password = Password.getText().toString();
+        //Syntactic credential check
 
-        //Check emptiness of inputs
-        if(TextUtils.isEmpty(email)){
-            Toast.makeText(this, "Please fill the email field", Toast.LENGTH_SHORT).show();
-            return;
+    private void SigninUser() {
+        try {
+            String email = Email.getText().toString().trim().toLowerCase();
+            String password = Password.getText().toString();
+
+            //Check emptiness of inputs
+            if (TextUtils.isEmpty(email)) {
+                Toast.makeText(this, "Please fill the email field", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (TextUtils.isEmpty(password)) {
+                Toast.makeText(this, "Please fill the password field", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            //Inputs are valid apparently
+            progressdialog.setMessage("Signing in, please wait.");
+            progressdialog.show();
+
+            Login();
+        }catch (Exception e){
+            Log.e("idk",e.getMessage());
         }
-
-        if(TextUtils.isEmpty(password)){
-            Toast.makeText(this, "Please fill the password field", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        //Inputs are valid apparently
-        progressdialog.setMessage("Signing in, please wait.");
-        progressdialog.show();
-
-        Login();
     }
+
 
     //Method to read signin button press
     @Override
-    public void onClick(View view){
-        if(view == Signin) {
+    public void onClick(View view) {
+        if (view == Signin) {
             SigninUser();
-        }
-
-        else if(view == Register) {
+        } else if (view == Register) {
             Intent next = new Intent(getApplicationContext(), RegisterActivity.class);
             startActivity(next);
         }
