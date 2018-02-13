@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Syntactic credential check
 
     private void SigninUser() {
-        try {
+
             String email = Email.getText().toString().trim().toLowerCase();
             String password = Password.getText().toString();
 
@@ -116,10 +116,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             progressdialog.show();
 
             Login();
-        }catch (Exception e){
-            Log.e("idk",e.getMessage());
+
         }
-    }
+
 
 
     //Method to read signin button press

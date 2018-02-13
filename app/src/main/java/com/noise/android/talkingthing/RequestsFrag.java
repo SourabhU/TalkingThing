@@ -9,11 +9,11 @@ import android.view.ViewGroup;
 
 import com.noise.android.talkingthing.R;
 
-public class ForumFrag extends Fragment {
-    public static ForumFrag newInstance() {
-    ForumFrag fragment = new ForumFrag();
+public class RequestsFrag extends Fragment {
+    public static RequestsFrag newInstance() {
+        RequestsFrag fragment = new RequestsFrag();
         return fragment;
-}
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

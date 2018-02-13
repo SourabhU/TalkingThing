@@ -33,19 +33,18 @@ import static com.noise.android.talkingthing.R.id.Signin;
 import static com.noise.android.talkingthing.R.id.signout;
 import static com.noise.android.talkingthing.R.id.start;
 
+
 public class HomeFrag extends android.support.v4.app.Fragment {
 
     private Button signout;
     private FirebaseAuth firebaseAuth;
-    private FirebaseUser User;
-    private DatabaseReference firebaseDatabase;
     private TextView username;
 
     public HomeFrag() {
     }
 
     public static HomeFrag newInstance() {
-    HomeFrag fragment = new HomeFrag();
+        HomeFrag fragment = new HomeFrag();
         return fragment;
     }
 
@@ -57,18 +56,18 @@ public class HomeFrag extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-       final View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         final Button signout = (Button) rootView.findViewById(R.id.signout);
 
-        User = FirebaseAuth.getInstance().getCurrentUser();
-        firebaseDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(User.getUid());
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference firebaseDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid());
 
         //Bringing in User information from the database
         firebaseDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String name = dataSnapshot.child("name").getValue().toString();
-                username = (TextView) rootView.findViewById(R.id.UserName);
+                username = rootView.findViewById(R.id.UserName);
                 username.setText(name);
                 String image = dataSnapshot.child("image").getValue().toString();
                 String status = dataSnapshot.child("status").getValue().toString();
@@ -81,17 +80,18 @@ public class HomeFrag extends android.support.v4.app.Fragment {
         });
 
         signout.setOnClickListener(
-            new View.OnClickListener() {
-                public void onClick(View view){
-                if (view.getId() == R.id.signout) {
-                    firebaseAuth.getInstance().signOut();
-                    getActivity().startActivity(new Intent(getContext(),MainActivity.class));
-                    getActivity().finish();
-                }
+                new View.OnClickListener() {
+                    public void onClick(View view) {
+                        if (view.getId() == R.id.signout) {
+                            firebaseAuth.getInstance().signOut();
+                            getActivity().startActivity(new Intent(getContext(), MainActivity.class));
+                            getActivity().finish();
+                        }
 
+                    }
                 }
-            }
         );
         return rootView;
     }
 }
+

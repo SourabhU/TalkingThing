@@ -36,8 +36,8 @@ public class Home extends AppCompatActivity {
                             case R.id.action_ChatFrag:
                                 selectedFragment = ChatFrag.newInstance();
                                 break;
-                            case R.id.action_ForumFrag:
-                                selectedFragment = ForumFrag.newInstance();
+                            case R.id.action_RequestsFrag:
+                                selectedFragment = RequestsFrag.newInstance();
                                 break;
                         }
                         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

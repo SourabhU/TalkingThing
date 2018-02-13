@@ -8,8 +8,8 @@
             android:id="@+id/action_ChatFrag"
             android:icon="@mipmap/ic_launcher"
             android:title="Chat"></item>
-        <item
-            android:id="@+id/action_ForumFrag"
-            android:icon="@drawable/ic_notifications_black_24dp"
-            android:title="Notifications"></item>
+    <item
+        android:id="@+id/action_RequestsFrag"
+        android:icon="@android:drawable/ic_input_add"
+        android:title="Requests"></item>
     </menu>
