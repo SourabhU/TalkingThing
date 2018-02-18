@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -99,11 +100,9 @@ public class ChatFrag extends Fragment {
                 R.layout.users_chat_template,
                 UsersViewHolder.class,
                 firebaseDatabase
-
         ){
             @Override
             protected void populateViewHolder(UsersViewHolder view, Users model, int position) {
-
                 view.setName(model.getName());
             }
         };
