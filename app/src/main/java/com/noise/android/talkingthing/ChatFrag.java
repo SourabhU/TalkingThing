@@ -100,11 +100,9 @@ public class ChatFrag extends Fragment {
                 R.layout.users_chat_template,
                 UsersViewHolder.class,
                 firebaseDatabase
-
         ){
             @Override
             protected void populateViewHolder(UsersViewHolder view, Users model, int position) {
-
                 view.setName(model.getName());
             }
         };

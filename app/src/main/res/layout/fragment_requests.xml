@@ -10,16 +10,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="8dp">
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Search user"
-            android:layout_weight="10"/>
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_search" />
+     <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+         android:layout_height="wrap_content"
+         android:layout_width="match_parent"
+         android:padding = "8dp"
+         android:hint="Find Users"
+         android:id="@+id/search_bar"/>
 
     </LinearLayout>
 
