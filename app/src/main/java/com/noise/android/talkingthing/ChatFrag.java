@@ -125,5 +125,7 @@ public class ChatFrag extends Fragment {
             TextView usernameview = view.findViewById(R.id.Username);
             usernameview.setText(name);
         }
+
+
     }
 }

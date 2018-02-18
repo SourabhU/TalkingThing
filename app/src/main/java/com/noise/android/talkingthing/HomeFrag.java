@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +40,9 @@ public class HomeFrag extends android.support.v4.app.Fragment {
     private Button signout;
     private FirebaseAuth firebaseAuth;
     private TextView username;
+    private TextView status;
+    private TextView email;
+
 
     public HomeFrag() {
     }
@@ -62,15 +66,24 @@ public class HomeFrag extends android.support.v4.app.Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference firebaseDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid());
 
+        String email_db = user.getEmail();
+        email = rootView.findViewById(R.id.Email);
+        email.setText(email_db);
         //Bringing in User information from the database
         firebaseDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 String name = dataSnapshot.child("name").getValue().toString();
-                username = rootView.findViewById(R.id.UserName);
+                username = rootView.findViewById(R.id.Username_changeable);
                 username.setText(name);
-                String image = dataSnapshot.child("image").getValue().toString();
-                String status = dataSnapshot.child("status").getValue().toString();
+
+                String image_fromdb = dataSnapshot.child("image").getValue().toString();
+                //imageView = rootView.findViewById(R.id.imageView);
+                //imageView.setImageBitmap(image_fromdb);
+                String status_string = dataSnapshot.child("status").getValue().toString();
+                status = rootView.findViewById(R.id.status_changeable);
+                status.setText(status_string);
             }
 
             @Override
@@ -85,7 +98,7 @@ public class HomeFrag extends android.support.v4.app.Fragment {
                         if (view.getId() == R.id.signout) {
                             firebaseAuth.getInstance().signOut();
                             getActivity().startActivity(new Intent(getContext(), MainActivity.class));
-                            getActivity().finish();
+                            onDestroyView();
                         }
 
                     }
