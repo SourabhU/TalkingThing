@@ -8,6 +8,7 @@
     android:layout_height="match_parent"
     tools:context="com.noise.android.talkingthing.Home">
 
+
     <FrameLayout
         android:id="@+id/frame_layout"
         android:layout_width="match_parent"

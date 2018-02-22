@@ -1,16 +1,22 @@
 package com.noise.android.talkingthing;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -18,7 +24,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class RequestsFrag extends Fragment {
     public static RequestsFrag newInstance() {
@@ -26,9 +34,14 @@ public class RequestsFrag extends Fragment {
         return fragment;
     }
 
+    private EditText search_bar;
+    private String username;
+    private Button search;
+
     public class Users {
 
         public String  name;
+        public String email;
         public String image;
         public String status;
 
@@ -38,6 +51,10 @@ public class RequestsFrag extends Fragment {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
         }
 
         public void setImage(String image) {
@@ -50,6 +67,10 @@ public class RequestsFrag extends Fragment {
 
         public String getName() {
             return name;
+        }
+
+        public String getEmail() {
+            return email;
         }
 
         public String getImage() {
@@ -71,6 +92,7 @@ public class RequestsFrag extends Fragment {
 
     private FirebaseDatabase firebaseDatabase;
 
+    private FirebaseUser User;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,10 +103,53 @@ public class RequestsFrag extends Fragment {
                              Bundle savedInstanceState) {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference reference = firebaseDatabase.getReference().child("Users");
+        final DatabaseReference reference = firebaseDatabase.getReference();
 
-        View rootview = inflater.inflate(R.layout.fragment_requests, container, false);
+        final List<String> values = new ArrayList<String>();
 
-        return inflater.inflate(R.layout.fragment_requests, container, false);
-        }
+        final View rootview = inflater.inflate(R.layout.fragment_requests, container, false);
+        search_bar = rootview.findViewById(R.id.search_bar);
+
+        search = rootview.findViewById(R.id.search_btn);
+
+        search.setOnClickListener(
+                new View.OnClickListener() {
+                    public void onClick(View view) {
+                        username = search_bar.getText().toString();
+                        if(TextUtils.isEmpty(username)) {
+                            Toast.makeText(getActivity(), "Please fill in a username", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+               reference.child("Users")
+                       .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Get Post object and use the values to update the UI
+                        final Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                        for (DataSnapshot child: children) {
+                            HashMap<String,String> values = (HashMap<String, String>) child.getValue();
+                            if(values.get("name").equals(username)){
+                                Intent lol = new Intent(getContext(), Other_Home.class).putExtra("name",username);
+                                getActivity().startActivity(lol);
+                            }
+//                            Toast.makeText(getActivity(), values.get("email"), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Getting Post failed, log a message
+                        // ...
+                        Toast.makeText(getContext(), "No such user exists", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                        ArrayAdapter<String> valueAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.activity_list_item,values);
+
+                    }
+                }
+        );
+        return rootview;
     }
+}
