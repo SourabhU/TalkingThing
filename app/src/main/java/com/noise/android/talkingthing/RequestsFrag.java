@@ -92,6 +92,7 @@ public class RequestsFrag extends Fragment {
 
     private FirebaseDatabase firebaseDatabase;
 
+    private FirebaseUser User;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
