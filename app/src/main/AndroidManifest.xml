@@ -20,10 +20,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity"
-      />
+        <activity android:name=".RegisterActivity" />
         <activity android:name=".Home" />
-        <activity android:name=".BottomNav"></activity>
+        <activity android:name=".BottomNav" />
+        <activity android:name=".Other_Home"></activity>
     </application>
 
 </manifest>
