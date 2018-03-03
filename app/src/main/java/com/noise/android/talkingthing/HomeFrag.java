@@ -26,6 +26,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.util.HashMap;
+
 import static android.R.attr.data;
 import static android.R.attr.name;
 import static android.R.attr.onClick;
@@ -42,7 +44,6 @@ public class HomeFrag extends android.support.v4.app.Fragment {
     private TextView username;
     private TextView status;
     private TextView email;
-
 
     public HomeFrag() {
     }
@@ -96,6 +97,18 @@ public class HomeFrag extends android.support.v4.app.Fragment {
                 new View.OnClickListener() {
                     public void onClick(View view) {
                         if (view.getId() == R.id.signout) {
+                            String User = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                            DatabaseReference firebaseDatabase1 = FirebaseDatabase.getInstance().getReference().child("Users").child(User);
+
+                            HashMap<String, String> UsersData = new HashMap<>();
+                            UsersData.put("name", username.getText().toString());
+                            UsersData.put("email",email.getText().toString());
+                            UsersData.put("image", "default");
+                            UsersData.put("status", "Offline");
+                            UsersData.put("thumbnail", "default");
+
+                            firebaseDatabase1.setValue(UsersData);
+
                             firebaseAuth.getInstance().signOut();
                             getActivity().startActivity(new Intent(getContext(), MainActivity.class));
                             onDestroyView();
