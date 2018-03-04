@@ -27,6 +27,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".BottomNav" />
         <activity android:name=".Other_Home" />
+        <activity android:name=".Forum"></activity>
     </application>
 
 </manifest>

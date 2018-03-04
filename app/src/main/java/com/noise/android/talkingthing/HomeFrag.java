@@ -103,7 +103,6 @@ public class HomeFrag extends android.support.v4.app.Fragment {
                             HashMap<String, String> UsersData = new HashMap<>();
                             UsersData.put("name", username.getText().toString());
                             UsersData.put("email",email.getText().toString());
-                            UsersData.put("image", "default");
                             UsersData.put("status", "Offline");
                             UsersData.put("thumbnail", "default");
 
