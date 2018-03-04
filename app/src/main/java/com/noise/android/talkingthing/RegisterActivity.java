@@ -105,7 +105,6 @@ public class RegisterActivity extends AppCompatActivity {
                             HashMap<String, String> UsersData = new HashMap<>();
                             UsersData.put("name", username);
                             UsersData.put("email",email);
-                            UsersData.put("image", "default");
                             UsersData.put("status", "Active");
                             UsersData.put("thumbnail", "default");
 
