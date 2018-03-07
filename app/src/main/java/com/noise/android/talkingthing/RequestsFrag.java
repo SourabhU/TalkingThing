@@ -91,6 +91,7 @@ public class RequestsFrag extends Fragment {
     }
 
     private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference friend_data;
 
     private FirebaseUser User;
     @Override
@@ -103,6 +104,9 @@ public class RequestsFrag extends Fragment {
                              Bundle savedInstanceState) {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
+
+        friend_data = FirebaseDatabase.getInstance().getReference().child("Friend_requests");
+
         final DatabaseReference reference = firebaseDatabase.getReference();
 
         final List<String> values = new ArrayList<String>();
@@ -131,6 +135,7 @@ public class RequestsFrag extends Fragment {
                             HashMap<String,String> values = (HashMap<String, String>) child.getValue();
                             if(values.get("name").equals(username)){
                                 Intent lol = new Intent(getContext(), Other_Home.class).putExtra("name",username);
+                                lol.putExtra("user_id",child.getKey().toString());
                                 getActivity().startActivity(lol);
                             }
 //                            Toast.makeText(getActivity(), values.get("email"), Toast.LENGTH_SHORT).show();
@@ -150,6 +155,22 @@ public class RequestsFrag extends Fragment {
                     }
                 }
         );
+
+//        friend_data.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                        Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+//                        for (DataSnapshot child: children) {
+//                            Toast.makeText(getContext(), child.getKey(), Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//                        Toast.makeText(getContext(), "No requests", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
         return rootview;
     }
 }

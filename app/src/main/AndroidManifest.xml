@@ -26,8 +26,15 @@
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".BottomNav" />
-        <activity android:name=".Other_Home" />
-        <activity android:name=".Forum"></activity>
+        <activity
+            android:name=".Other_Home"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Forum" />
+        <activity
+            android:name=".Emailpopup"
+            android:theme="@style/AppTheme.PopUp" />
+        <activity android:name=".Usernamepopup"
+            android:theme="@style/AppTheme.PopUp"></activity>
     </application>
 
 </manifest>

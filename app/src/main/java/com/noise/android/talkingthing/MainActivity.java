@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.StringBufferInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,6 +70,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if(firebaseauth.getCurrentUser() != null){
             //home activity
+
+            FirebaseUser User = FirebaseAuth.getInstance().getCurrentUser();
+            if(User.isEmailVerified() == false) {
+                Toast.makeText(this, "Please check your mail for verification link", Toast.LENGTH_SHORT).show();
+                User.sendEmailVerification();
+                return;
+            }
             Intent home;
             home = new Intent(getApplicationContext(),Home.class);
             home.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -138,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-    //Method to read signin button press
+    //Method to read all button presses
     @Override
     public void onClick(View view) {
         if (view == Signin) {
