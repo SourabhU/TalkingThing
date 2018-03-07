@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -18,10 +19,15 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -35,7 +41,7 @@ public class RegisterActivity extends AppCompatActivity {
     private ProgressDialog progressdialog_Reg;
 
     private FirebaseAuth firebaseAuth_Reg;
-    private DatabaseReference firebaseDatabase;
+    private FirebaseDatabase firebaseDatabase;
 
 
     @Override
@@ -82,6 +88,30 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        final DatabaseReference reference = firebaseDatabase.getReference();
+                        reference.child("Users")
+                                .addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        // Get Post object and use the values to update the UI
+                                        final Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                                        for (DataSnapshot child: children) {
+                                            HashMap<String,String> values = (HashMap<String, String>) child.getValue();
+                                            if(values.get("name").equals(Username_Reg.getText().toString())){
+                                                Toast.makeText(RegisterActivity.this, "Username taken", Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        // Getting Post failed, log a message
+                                        // ...
+                                    }
+                                });
+
             //Inputs are valid apparently
             progressdialog_Reg.setMessage("Signing up, please wait.");
             progressdialog_Reg.setCancelable(true);
@@ -100,7 +130,7 @@ public class RegisterActivity extends AppCompatActivity {
                             FirebaseUser User = FirebaseAuth.getInstance().getCurrentUser();
                             String UID = User.getUid();
 
-                            firebaseDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(UID);
+                            DatabaseReference firebaseDatabase1 = FirebaseDatabase.getInstance().getReference().child("Users").child(UID);
 
                             HashMap<String, String> UsersData = new HashMap<>();
                             UsersData.put("name", username);
@@ -108,7 +138,7 @@ public class RegisterActivity extends AppCompatActivity {
                             UsersData.put("status", "Active");
                             UsersData.put("thumbnail", "default");
 
-                            firebaseDatabase.setValue(UsersData);
+                            firebaseDatabase1.setValue(UsersData);
 
                             progressdialog_Reg.dismiss();
                             Toast.makeText(RegisterActivity.this, "Registration complete", Toast.LENGTH_SHORT).show();

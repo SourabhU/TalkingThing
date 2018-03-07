@@ -1,6 +1,7 @@
 package com.noise.android.talkingthing;
 
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 
 import android.os.Bundle;
@@ -9,8 +10,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +30,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static android.R.attr.data;
 import static android.R.attr.name;
@@ -44,6 +50,8 @@ public class HomeFrag extends android.support.v4.app.Fragment {
     private TextView username;
     private TextView status;
     private TextView email;
+    private TextView change_email_button;
+    private TextView change_username_button;
 
     public HomeFrag() {
     }
@@ -63,6 +71,8 @@ public class HomeFrag extends android.support.v4.app.Fragment {
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         final Button signout = (Button) rootView.findViewById(R.id.signout);
+        final TextView change_email_button = rootView.findViewById(R.id.change_email_button);
+        final TextView change_username_button = rootView.findViewById(R.id.change_username_button);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference firebaseDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid());
@@ -79,9 +89,6 @@ public class HomeFrag extends android.support.v4.app.Fragment {
                 username = rootView.findViewById(R.id.Username_changeable);
                 username.setText(name);
 
-                String image_fromdb = dataSnapshot.child("image").getValue().toString();
-                //imageView = rootView.findViewById(R.id.imageView);
-                //imageView.setImageBitmap(image_fromdb);
                 String status_string = dataSnapshot.child("status").getValue().toString();
                 status = rootView.findViewById(R.id.status_changeable);
                 status.setText(status_string);
@@ -90,6 +97,18 @@ public class HomeFrag extends android.support.v4.app.Fragment {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Toast.makeText(getContext(), "Unable to retrive user data", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        change_email_button.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view){
+                startActivity(new Intent(getContext(),Emailpopup.class));
+            }
+        });
+
+        change_username_button.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view){
+                startActivity(new Intent(getContext(),Usernamepopup.class));
             }
         });
 
