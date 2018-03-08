@@ -90,4 +90,5 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="70dp"
         android:text="Accept friend" />
+
 </RelativeLayout>

@@ -42,7 +42,7 @@ public class Home extends AppCompatActivity {
                 }
                 if (id == R.id.nav_playstore) {
 //                    Toast.makeText(getBaseContext(), "Featured App opens", Toast.LENGTH_SHORT).show();
-                    String packagename = getPackageName();
+                    //String packagename = getPackageName();
                     Intent playstore = new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.appsomniacs.da2"));
                     startActivity(playstore);
                     finish();
@@ -53,34 +53,34 @@ public class Home extends AppCompatActivity {
             }
         });
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener
-                (new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        Fragment selectedFragment = null;
-                        switch (item.getItemId()) {
-                            case R.id.action_HomeFrag:
-                                selectedFragment = HomeFrag.newInstance();
-                                break;
-                            case R.id.action_ChatFrag:
-                                selectedFragment = ChatFrag.newInstance();
-                                break;
-                            case R.id.action_RequestsFrag:
-                                selectedFragment = RequestsFrag.newInstance();
-                                break;
+            BottomNavigationView bottomNavigationView = findViewById(R.id.navigation);
+            bottomNavigationView.setOnNavigationItemSelectedListener
+                    (new BottomNavigationView.OnNavigationItemSelectedListener() {
+                        @Override
+                        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                            Fragment selectedFragment = null;
+                            switch (item.getItemId()) {
+                                case R.id.action_HomeFrag:
+                                    selectedFragment = HomeFrag.newInstance();
+                                    break;
+                                case R.id.action_ChatFrag:
+                                    selectedFragment = ChatFrag.newInstance();
+                                    break;
+                                case R.id.action_RequestsFrag:
+                                    selectedFragment = RequestsFrag.newInstance();
+                                    break;
+                            }
+                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                            transaction.replace(R.id.frame_layout, selectedFragment);
+                            transaction.commit();
+                            return true;
                         }
-                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                        transaction.replace(R.id.frame_layout, selectedFragment);
-                        transaction.commit();
-                        return true;
-                    }
-                });
+                    });
 
-        //Manually displaying the first fragment - one time only
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frame_layout, HomeFrag.newInstance());
-        transaction.commit();
+            //Manually displaying the first fragment - one time only
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.frame_layout, ChatFrag.newInstance());
+            transaction.commit();
 
         //Used to select an item programmatically
         //bottomNavigationView.getMenu().getItem(2).setChecked(true);

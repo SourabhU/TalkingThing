@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -37,6 +38,7 @@ public class RequestsFrag extends Fragment {
     private EditText search_bar;
     private String username;
     private Button search;
+    private ListView list_item;
 
     public class Users {
 
@@ -114,6 +116,8 @@ public class RequestsFrag extends Fragment {
         final View rootview = inflater.inflate(R.layout.fragment_requests, container, false);
         search_bar = rootview.findViewById(R.id.search_bar);
 
+        list_item = rootview.findViewById(R.id.list_item);
+
         search = rootview.findViewById(R.id.search_btn);
 
         search.setOnClickListener(
@@ -156,21 +160,30 @@ public class RequestsFrag extends Fragment {
                 }
         );
 
-//        friend_data.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot dataSnapshot) {
-//                        Iterable<DataSnapshot> children = dataSnapshot.getChildren();
-//                        for (DataSnapshot child: children) {
-//                            Toast.makeText(getContext(), child.getKey(), Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//                        Toast.makeText(getContext(), "No requests", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
+        friend_data.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                        ArrayList<String> names = new ArrayList<>();
+                        for (DataSnapshot child: children) {
+                            if(child.getValue().equals("received")) {
+                                DatabaseReference name_ref = reference.child("Users").child(child.getKey()).child("name");
+                                names.add(name_ref.toString());
+                            }
+                            Toast.makeText(getContext(), child.getKey(), Toast.LENGTH_SHORT).show();
+                        }
+                        ArrayAdapter<String> Requests = new ArrayAdapter<String>(getContext(), R.layout.fragment_requests, names);
+                        list_item.setAdapter(Requests);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(getContext(), "No requests", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
         return rootview;
     }
 }
