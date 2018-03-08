@@ -36,6 +36,7 @@ public class Other_Home extends AppCompatActivity {
     private TextView status_changeable;
     private Button button_add;
     private Button button_accept;
+//    private Button button_sendmessage;
 
     int current_state = 0;
 
@@ -57,6 +58,7 @@ public class Other_Home extends AppCompatActivity {
         status_changeable = findViewById(R.id.status_changeable);
         button_add = findViewById(R.id.button_add);
         button_accept = findViewById(R.id.button_accept);
+//        button_sendmessage = findViewById((R.id.button_sendmessage));
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         final DatabaseReference ref = firebaseDatabase.getReference();
@@ -84,24 +86,35 @@ public class Other_Home extends AppCompatActivity {
         friend_data = FirebaseDatabase.getInstance().getReference().child("friend_requests");
         friend_list = FirebaseDatabase.getInstance().getReference().child("friends");
 
-        friend_data.child(User_id)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Iterable<DataSnapshot> children = dataSnapshot.getChildren();
-                        for (DataSnapshot child: children) {
-                            if(child.getKey().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-                                current_state = 1;
-                                button_add.setText("Cancel request");
+        if (friend_list.child(User_id).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).toString().isEmpty()){
+            current_state = 0;
+        }
+        else{
+            current_state = 2;
+            button_add.setText("Unfriend");
+            button_accept.setEnabled(false);
+        }
+
+
+            friend_data.child(User_id)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                            for (DataSnapshot child : children) {
+                                if (child.getKey().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                    current_state = 1;
+                                    button_add.setText("Cancel request");
+                                }
                             }
                         }
-                        }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        current_state = 0;
-                    }
-                });
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            current_state = 0;
+                        }
+                    });
+
 
         button_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,9 +211,31 @@ public class Other_Home extends AppCompatActivity {
 
                         }
                     });
+                    if(current_state == 2){
+                        friend_list.child(User_id).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                friend_list.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(User_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(Other_Home.this, "Unfriended", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        });
+                    }
                 }
             }
         });
+
+//        button_sendmessage.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent chat_jump = new Intent(getBaseContext(),Home.class).putExtra("targetUser",User_id);
+//                startActivity(chat_jump);
+//                finish();
+//            }
+//        });
 
 //        username_changeable.setText(name);
 //        status_changeable.setText(status);

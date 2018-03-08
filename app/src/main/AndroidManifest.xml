@@ -33,8 +33,10 @@
         <activity
             android:name=".Emailpopup"
             android:theme="@style/AppTheme.PopUp" />
-        <activity android:name=".Usernamepopup"
-            android:theme="@style/AppTheme.PopUp"></activity>
+        <activity
+            android:name=".Usernamepopup"
+            android:theme="@style/AppTheme.PopUp" />
+        <activity android:name=".Personal_chat_screen"></activity>
     </application>
 
 </manifest>

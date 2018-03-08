@@ -136,7 +136,6 @@ public class RegisterActivity extends AppCompatActivity {
                             UsersData.put("name", username);
                             UsersData.put("email",email);
                             UsersData.put("status", "Active");
-                            UsersData.put("thumbnail", "default");
 
                             firebaseDatabase1.setValue(UsersData);
 
