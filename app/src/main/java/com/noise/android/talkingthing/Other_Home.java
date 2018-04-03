@@ -1,6 +1,7 @@
 package com.noise.android.talkingthing;
 
 import android.content.Intent;
+import android.icu.util.Currency;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -42,7 +43,7 @@ public class Other_Home extends AppCompatActivity {
 
     FirebaseDatabase firebaseDatabase;
 
-    private DatabaseReference friend_data;
+    private DatabaseReference friend_req;
     private DatabaseReference friend_list;
 
     @Override
@@ -58,63 +59,76 @@ public class Other_Home extends AppCompatActivity {
         status_changeable = findViewById(R.id.status_changeable);
         button_add = findViewById(R.id.button_add);
         button_accept = findViewById(R.id.button_accept);
+        button_accept.setEnabled(false);
 //        button_sendmessage = findViewById((R.id.button_sendmessage));
 
         firebaseDatabase = FirebaseDatabase.getInstance();
+
+        final String Current_User = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
+
         final DatabaseReference ref = firebaseDatabase.getReference();
         ref.child("Users")
                 .addValueEventListener( new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Iterable<DataSnapshot> children = dataSnapshot.getChildren();
-                for (DataSnapshot child : children) {
-                    HashMap<String, String> values = (HashMap<String, String>) child.getValue();
-                    if (values.get("name").equals(username)) {
-                        username_changeable.setText(username);
-                        status_changeable.setText(values.get("status"));
-                        return;
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(Other_Home.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        friend_data = FirebaseDatabase.getInstance().getReference().child("friend_requests");
-        friend_list = FirebaseDatabase.getInstance().getReference().child("friends");
-
-        if (friend_list.child(User_id).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).toString().isEmpty()){
-            current_state = 0;
-        }
-        else{
-            current_state = 2;
-            button_add.setText("Unfriend");
-            button_accept.setEnabled(false);
-        }
-
-
-            friend_data.child(User_id)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            Iterable<DataSnapshot> children = dataSnapshot.getChildren();
-                            for (DataSnapshot child : children) {
-                                if (child.getKey().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                                    current_state = 1;
-                                    button_add.setText("Cancel request");
-                                }
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                        for (DataSnapshot child : children) {
+                            HashMap<String, String> values = (HashMap<String, String>) child.getValue();
+                            if (values.get("name").equals(username)) {
+                                username_changeable.setText(username);
+                                status_changeable.setText(values.get("status"));
+                                return;
                             }
                         }
+                    }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            current_state = 0;
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(Other_Home.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        friend_req = FirebaseDatabase.getInstance().getReference().child("friend_requests");
+        friend_list = FirebaseDatabase.getInstance().getReference().child("friends");
+
+        friend_req.child(User_id)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                        for (DataSnapshot child : children) {
+                            if (child.getKey().equals(Current_User)) {
+                                current_state = 1;
+                                button_accept.setEnabled(true);
+                            }
                         }
-                    });
+                    }
 
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        current_state = 0;
+                        button_accept.setEnabled(false);
+                    }
+                });
+
+        friend_list.child(User_id)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                        for (DataSnapshot child : children) {
+                            if (child.getKey().equals(User_id)) {
+                                current_state = 2;
+                                button_accept.setEnabled(false);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        current_state = 0;
+                    }
+                });
 
         button_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,36 +137,36 @@ public class Other_Home extends AppCompatActivity {
 
                 //  WHEN NOT FRIENDS
                 if(current_state == 0){
-                    friend_data.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(User_id).child("request_type").setValue("sent")
+                    friend_req.child(Current_User).child(User_id).child("request_type").setValue("sent")
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()) {
-                                current_state = 1;
-                                button_add.setText("Cancel request");
-                                button_add.setEnabled(true);
-                                friend_data.child(User_id).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("request_type").setValue("received")
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Toast.makeText(Other_Home.this, "Friend request sent", Toast.LENGTH_SHORT).show();
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()) {
+                                        current_state = 1;
+                                        button_add.setText("Cancel request");
+                                        button_add.setEnabled(true);
+                                        friend_req.child(User_id).child(Current_User).child("request_type").setValue("received")
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Toast.makeText(Other_Home.this, "Friend request sent", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
                                     }
-                                });
-                            }
-                            else {
-                                Toast.makeText(Other_Home.this, "Adding friend failed", Toast.LENGTH_SHORT).show();
-                                button_add.setEnabled(true);
-                            }
-                        }
-                    });
+                                    else {
+                                        Toast.makeText(Other_Home.this, "Adding friend failed", Toast.LENGTH_SHORT).show();
+                                        button_add.setEnabled(true);
+                                    }
+                                }
+                            });
                 }
 
                 //  WHEN FRIEND REQUEST IS TO BE CANCELLED
                 if(current_state == 1){
-                    friend_data.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(User_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    friend_req.child(Current_User).child(User_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            friend_data.child(User_id).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            friend_req.child(User_id).child(Current_User).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Toast.makeText(Other_Home.this, "Request cancelled", Toast.LENGTH_SHORT).show();
@@ -164,14 +178,20 @@ public class Other_Home extends AppCompatActivity {
                         }
                     });
                 }
+
+                if(!friend_list.child(Current_User).child(User_id).equals(null)){
+                    current_state = 2;
+                    button_add.setText("Remove friend");
+                    button_accept.setEnabled(false);
+                }
             }
         });
 
         button_accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!friend_data.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).toString().isEmpty()) {
-                    friend_data.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                if (!friend_req.child(Current_User).toString().isEmpty()) {
+                    friend_req.child(Current_User).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.hasChild(User_id)) {
@@ -179,16 +199,16 @@ public class Other_Home extends AppCompatActivity {
                                 if (type.equals("received")) {
                                     final String date = DateFormat.getDateInstance().format(new Date());
                                     current_state = 2;
-                                    friend_list.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(User_id).setValue(date).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    friend_list.child(Current_User).child(User_id).setValue(date).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                            friend_list.child(User_id).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(date).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            friend_list.child(User_id).child(Current_User).setValue(date).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-                                                    friend_data.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(User_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    friend_req.child(Current_User).child(User_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
-                                                            friend_data.child(User_id).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            friend_req.child(User_id).child(Current_User).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                 @Override
                                                                 public void onSuccess(Void aVoid) {
                                                                     Toast.makeText(Other_Home.this, "Friend Added", Toast.LENGTH_SHORT).show();
@@ -212,10 +232,10 @@ public class Other_Home extends AppCompatActivity {
                         }
                     });
                     if(current_state == 2){
-                        friend_list.child(User_id).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        friend_list.child(User_id).child(Current_User).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                friend_list.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(User_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                friend_list.child(Current_User).child(User_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         Toast.makeText(Other_Home.this, "Unfriended", Toast.LENGTH_SHORT).show();

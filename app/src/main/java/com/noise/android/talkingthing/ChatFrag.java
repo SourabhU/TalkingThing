@@ -104,35 +104,37 @@ public class ChatFrag extends Fragment {
 
         friends = firebaseDatabase.child("friends").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        friends.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Iterable<DataSnapshot> children = dataSnapshot.getChildren();
-                final ArrayList<String> names = new ArrayList<>();
-                for (DataSnapshot child: children) {
-                    uids.add(child.getKey());
-                    firebaseDatabase.child("Users").child(child.getKey()).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            HashMap<String,String> child = (HashMap<String,String>) dataSnapshot.getValue();
-                            names.add(child.get("name").toString());
-                            ArrayAdapter<String> chat_list = new ArrayAdapter<>(getContext(),R.layout.users_chat_template,names);
-                            list_item.setAdapter(chat_list);
-                        }
+        if(!friends.equals(null)) {
+            friends.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                    final ArrayList<String> names = new ArrayList<>();
+                    for (DataSnapshot child : children) {
+                        uids.add(child.getKey());
+                        firebaseDatabase.child("Users").child(child.getKey()).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                HashMap<String, String> child = (HashMap<String, String>) dataSnapshot.getValue();
+                                names.add(child.get("name").toString());
+                                ArrayAdapter<String> chat_list = new ArrayAdapter<>(getContext(), R.layout.users_chat_template, names);
+                                list_item.setAdapter(chat_list);
+                            }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
+                            }
+                        });
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
 
         list_item.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

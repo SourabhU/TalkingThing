@@ -160,6 +160,7 @@ public class RequestsFrag extends Fragment {
                 }
         );
 
+        // TO SHOW ALL REQUESTS IN REQUESTS FRAGMENT
         friend_data.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
