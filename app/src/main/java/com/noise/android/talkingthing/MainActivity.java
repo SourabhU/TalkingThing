@@ -106,8 +106,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         progressdialog.dismiss();
                         if (task.isSuccessful()) {
-                            //start stuff
                             putActive();
+                            //start stuff
                             Intent home = new Intent(getApplicationContext(), Home.class);
                             startActivity(home);
                             finish();
