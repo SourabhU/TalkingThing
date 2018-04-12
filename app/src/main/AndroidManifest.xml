@@ -36,7 +36,10 @@
         <activity
             android:name=".Usernamepopup"
             android:theme="@style/AppTheme.PopUp" />
-        <activity android:name=".Personal_chat_screen"></activity>
+        <activity android:name=".Personal_chat_screen" />
+        <activity android:name=".Post" />
+        <activity android:name=".Newpost" />
+        <activity android:name=".Respond"></activity>
     </application>
 
 </manifest>

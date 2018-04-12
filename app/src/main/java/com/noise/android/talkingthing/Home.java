@@ -36,7 +36,7 @@ public class Home extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
                 if (id == R.id.nav_forum) {
-                    Toast.makeText(getBaseContext(), "yaaaaaaaaay", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getBaseContext(), "yaaaaaaaaay", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(getBaseContext(), Forum.class));
                     finish();
                 }
