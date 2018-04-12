@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.noise.android.talkingthing.Newpost">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="495dp"
+        android:padding="20dp"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp">
+
+        <EditText
+            android:id="@+id/topic_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Topic of post"/>
+
+        <EditText
+            android:id="@+id/description"
+            android:layout_below="@+id/topic_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description"/>
+
+        <Button
+            android:id="@+id/post_button"
+            android:layout_below="@+id/description"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="post"/>
+
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>

@@ -31,7 +31,6 @@ import java.util.HashMap;
 
 public class Other_Home extends AppCompatActivity {
 
-    private String username;
     private TextView email;
     private TextView username_changeable;
     private TextView status_changeable;
@@ -53,7 +52,6 @@ public class Other_Home extends AppCompatActivity {
 
         final String User_id = getIntent().getStringExtra("user_id");
 
-        username = getIntent().getExtras().getString("name");
         email = findViewById(R.id.Email);
         username_changeable = findViewById(R.id.Username_changeable);
         status_changeable = findViewById(R.id.status_changeable);
@@ -67,29 +65,23 @@ public class Other_Home extends AppCompatActivity {
         final String Current_User = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
 
         final DatabaseReference ref = firebaseDatabase.getReference();
-        ref.child("Users")
-                .addValueEventListener( new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Iterable<DataSnapshot> children = dataSnapshot.getChildren();
-                        for (DataSnapshot child : children) {
-                            HashMap<String, String> values = (HashMap<String, String>) child.getValue();
-                            if (values.get("name").equals(username)) {
-                                username_changeable.setText(username);
-                                status_changeable.setText(values.get("status"));
-                                return;
-                            }
-                        }
-                    }
+        ref.child("Users").child(User_id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String,String> values = (HashMap<String,String>) dataSnapshot.getValue();
+                username_changeable.setText(values.get("name"));
+                status_changeable.setText(values.get("status"));
+                return;
+            }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Toast.makeText(Other_Home.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                return;
+            }
+        });
 
-        friend_req = FirebaseDatabase.getInstance().getReference().child("friend_requests");
-        friend_list = FirebaseDatabase.getInstance().getReference().child("friends");
+        friend_req = firebaseDatabase.getReference().child("friend_requests");
+        friend_list = firebaseDatabase.getReference().child("friends");
 
         friend_req.child(User_id)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -100,14 +92,17 @@ public class Other_Home extends AppCompatActivity {
                             if (child.getKey().equals(Current_User)) {
                                 current_state = 1;
                                 button_accept.setEnabled(true);
+                                button_add.setEnabled(false);
+                            }
+                            else {
+                                current_state = 0;
+                                button_accept.setEnabled(false);
                             }
                         }
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        current_state = 0;
-                        button_accept.setEnabled(false);
                     }
                 });
 
@@ -126,7 +121,7 @@ public class Other_Home extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        current_state = 0;
+                        return;
                     }
                 });
 
@@ -162,7 +157,7 @@ public class Other_Home extends AppCompatActivity {
                 }
 
                 //  WHEN FRIEND REQUEST IS TO BE CANCELLED
-                if(current_state == 1){
+                else if(current_state == 1){
                     friend_req.child(Current_User).child(User_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -172,17 +167,25 @@ public class Other_Home extends AppCompatActivity {
                                     Toast.makeText(Other_Home.this, "Request cancelled", Toast.LENGTH_SHORT).show();
                                     current_state = 0;
                                     button_add.setText("Add friend");
-                                    button_add.setEnabled(true);
+                                    button_add.setEnabled(false);
                                 }
                             });
                         }
                     });
                 }
 
-                if(!friend_list.child(Current_User).child(User_id).equals(null)){
-                    current_state = 2;
-                    button_add.setText("Remove friend");
-                    button_accept.setEnabled(false);
+                else if(current_state == 2){
+                    friend_list.child(User_id).child(Current_User).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            friend_list.child(Current_User).child(User_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(Other_Home.this, "Unfriended", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    });
                 }
             }
         });
@@ -194,56 +197,46 @@ public class Other_Home extends AppCompatActivity {
                     friend_req.child(Current_User).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
+                            button_accept.setEnabled(false);
                             if (dataSnapshot.hasChild(User_id)) {
                                 String type = dataSnapshot.child(User_id).child("request_type").getValue().toString();
                                 if (type.equals("received")) {
                                     final String date = DateFormat.getDateInstance().format(new Date());
                                     current_state = 2;
-                                    friend_list.child(Current_User).child(User_id).setValue(date).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            friend_list.child(User_id).child(Current_User).setValue(date).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    friend_req.child(Current_User).child(User_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void aVoid) {
-                                                            friend_req.child(User_id).child(Current_User).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                @Override
-                                                                public void onSuccess(Void aVoid) {
-                                                                    Toast.makeText(Other_Home.this, "Friend Added", Toast.LENGTH_SHORT).show();
-                                                                }
-                                                            });
-                                                        }
-                                                    });
-                                                }
-                                            });
-                                        }
-                                    });
-                                } else if (type.equals("sent")) {
-                                    button_add.setText("Request sent");
+                                  friend_list.child(User_id).child(Current_User).setValue(date).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                      @Override
+                                      public void onSuccess(Void aVoid) {
+                                          friend_list.child(Current_User).child(User_id).setValue(date).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                              @Override
+                                              public void onSuccess(Void aVoid) {
+//                                                  friend_req.child(Current_User).child(User_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                                      @Override
+//                                                      public void onSuccess(Void aVoid) {
+//                                                          friend_req.child(User_id).child(Current_User).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                                              @Override
+//                                                              public void onSuccess(Void aVoid) {
+//                                                                  Toast.makeText(Other_Home.this, "Frieng added", Toast.LENGTH_SHORT).show();
+//                                                                  button_add.setEnabled(true);
+//                                                                  button_add.setText("unfriend");
+//                                                                  return;
+//                                                              }
+//                                                          });
+//                                                      }
+//                                                  });
+                                              }
+                                          });
+                                      }
+                                  });
                                 }
                             }
                         }
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
-
+                            button_accept.setEnabled(true);
+                            return;
                         }
                     });
-                    if(current_state == 2){
-                        friend_list.child(User_id).child(Current_User).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                friend_list.child(Current_User).child(User_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Toast.makeText(Other_Home.this, "Unfriended", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        });
-                    }
                 }
             }
         });
@@ -259,6 +252,5 @@ public class Other_Home extends AppCompatActivity {
 
 //        username_changeable.setText(name);
 //        status_changeable.setText(status);
-
     }
 }

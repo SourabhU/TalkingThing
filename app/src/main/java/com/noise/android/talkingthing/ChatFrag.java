@@ -1,5 +1,7 @@
 package com.noise.android.talkingthing;
 
+import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,48 +47,48 @@ public class ChatFrag extends Fragment {
         return fragment;
     }
 
-    public class Users {
-
-        public String  name;
-        public String image;
-        public String status;
-
-        public Users(){
-
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public void setImage(String image) {
-            this.image = image;
-        }
-
-        public void setStatus(String status) {
-            this.status = status;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getImage() {
-            return image;
-        }
-
-        public String getStatus() {
-            return status;
-        }
-
-        public Users(String name, String image, String status) {
-            this.name = name;
-            this.image = image;
-            this.status = status;
-        }
-
-
-    }
+//    public class Users {
+//
+//        public String  name;
+//        public String image;
+//        public String status;
+//
+//        public Users(){
+//
+//        }
+//
+//        public void setName(String name) {
+//            this.name = name;
+//        }
+//
+//        public void setImage(String image) {
+//            this.image = image;
+//        }
+//
+//        public void setStatus(String status) {
+//            this.status = status;
+//        }
+//
+//        public String getName() {
+//            return name;
+//        }
+//
+//        public String getImage() {
+//            return image;
+//        }
+//
+//        public String getStatus() {
+//            return status;
+//        }
+//
+//        public Users(String name, String image, String status) {
+//            this.name = name;
+//            this.image = image;
+//            this.status = status;
+//        }
+//
+//
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,7 +107,9 @@ public class ChatFrag extends Fragment {
 
         friends = firebaseDatabase.child("friends").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        if(!friends.equals(null)) {
+
+        if (!friends.equals(null)) {
+            Toast.makeText(getContext(), "Please wait", Toast.LENGTH_SHORT).show();
             friends.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -123,7 +128,6 @@ public class ChatFrag extends Fragment {
 
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
-
                             }
                         });
                     }
@@ -131,23 +135,25 @@ public class ChatFrag extends Fragment {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
                 }
             });
+        }
+        else {                Toast.makeText(getContext(), "No chats", Toast.LENGTH_SHORT).show();
         }
 
         list_item.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                list_item.setEnabled(false);
                 TextView text = view.findViewById(R.id.Username);
-                Intent chat = new Intent(getContext(),Personal_chat_screen.class);
-                chat.putExtra("User_id",uids.get(position));
+                Intent chat = new Intent(getContext(), Personal_chat_screen.class);
+                chat.putExtra("User_id", uids.get(position));
                 startActivity(chat);
             }
         });
 
-        return rootView;
-    }
+    return rootView;
+}
 
 //    @Override
 //    public void onStart() {
